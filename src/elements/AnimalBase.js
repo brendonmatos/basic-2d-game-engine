@@ -1,4 +1,4 @@
-const { RigidBody } = require("./RigidBody");
+const { RigidBody } = require("../lib/RigidBody");
 const { AnimalMover } = require("./AnimalMover");
 class AnimalBase extends AnimalMover {
     constructor(position) {

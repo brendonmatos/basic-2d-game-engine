@@ -1,6 +1,6 @@
 const { AnimalMover } = require("./AnimalMover");
-const { MouseController } =  require("./MouseController");
-const { KeyboardController } =  require("./KeyboardController");
+const { MouseController } =  require("../lib/MouseController");
+const { KeyboardController } =  require("../lib/KeyboardController");
 class AnimalPlayer extends AnimalMover {
     constructor(position) {
         super(position);

@@ -2,7 +2,7 @@ const { AnimalMover } = require("./AnimalMover");
 class AnimalWithFear extends AnimalMover {
     constructor(position, settings) {
         super(position, settings);
-        this.fears = [ ]
+        this.fears = [ ] // Move fear to a separated component
         this.foods = [ {type: 'player'} ]
         
         this.runningFrom = []
@@ -49,7 +49,6 @@ class AnimalWithFear extends AnimalMover {
     isFood( element ) {
         return this.foods.some( food => food.type === element.type ) 
     }
-
 
     runFrom(element) {
 
@@ -99,15 +98,7 @@ class AnimalWithFear extends AnimalMover {
 
         return angleIsBetween(angleToElement, startRange, endRange)
     }
-    
-    isAngleBetween(x, a, b) {
 
-        const end = (b - a) < 0 ? b - a + 360 : b - a;    
-        const mid = (x - a) < 0 ? x - a + 360 : x - a; 
-        return (mid < end); 
-    }
-
-    
     verifyVision() {
 
         const elements = this.getContext().elements

@@ -1,0 +1,9 @@
+class BasicNecessities {
+
+
+    exec(element) {
+
+
+    }
+
+}

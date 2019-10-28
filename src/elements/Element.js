@@ -1,6 +1,6 @@
 const EventEmitter = require('events')
 
-const { angle } = require("./angle");
+const { angle } = require("../lib/angle");
 
 
 class Element {
