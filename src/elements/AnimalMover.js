@@ -1,5 +1,5 @@
 const { Animal } = require("./Animal");
-class AnimalMover extends Animal {
+export class AnimalMover extends Animal {
 
     constructor(position, settings = {}) {
         super(position, { x: 20, y: 20 });
@@ -40,4 +40,3 @@ class AnimalMover extends Animal {
         // ctx.fillText("Degrees: " + this.movement.degrees, this.position.x, this.position.y);
     }
 }
-exports.AnimalMover = AnimalMover;

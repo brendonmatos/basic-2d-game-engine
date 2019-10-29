@@ -1,7 +1,6 @@
-const { Viewer } = require("./Viewer");
+const { Viewer } = require("../components/Viewer");
 class World {
     constructor() {
-        this.viewer = new Viewer(this);
         this.elements = [];
         setInterval(i => {
             this.elements.map(i => {

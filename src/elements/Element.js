@@ -3,11 +3,12 @@ const EventEmitter = require('events')
 const { angle } = require("../lib/angle");
 
 
-class Element {
+class _Element {
     
     constructor(position, dimensions) {
         this.position = position;
         this.dimensions = dimensions;
+        this.context = null;
         this.messages = new EventEmitter();
     }
     
@@ -75,4 +76,6 @@ class Element {
         
     }
 }
-exports.Element = Element
+
+
+exports._Element = _Element

@@ -1,20 +1,16 @@
 const { AnimalMover } = require("./AnimalMover");
-const { Tags } = require( '../components/Tags' )
 const { FieldOfView } = require("../components/FieldOfView")
-class AnimalWithFear extends AnimalMover {
+class AnimalWithAngry extends AnimalMover {
     constructor(position, settings) {
         super(position, settings);
-
-        this.fears = [{tag: 'animal'}] // Move fear to a separated component
-        this.foods = [{type: 'player'}]
-        this.tags = new Tags(this)
+        this.type = 'animal-with-angry'
+        this.fears = [ ] // Move fear to a separated component
+        this.foods = [ {type: 'animal-with-fear'},  {type: 'player'} ]
         
-        this.tags.add('animal')
-        this.tags.add('prey')
-
         this.runningFrom = []
         this.viewDistance = 100
         this.viewAngleRange = 34
+        this.maxVelocity = 1
 
         this.fieldOfView = new FieldOfView(this)
 
@@ -81,6 +77,7 @@ class AnimalWithFear extends AnimalMover {
         }
     }
 
+    
     verifyVision() {
 
         const elements = this.getContext().elements
@@ -102,30 +99,18 @@ class AnimalWithFear extends AnimalMover {
     draw(ctx) {
         super.draw(ctx)
 
-        const center = this.getCenterPosition();
-        const ray = this.viewDistance;
-
-        const range = this.viewAngleRange / 2;
-        
-        this.drawLineInside(ctx, this.movement.degrees - range, this.viewDistance)
-        this.drawLineInside(ctx, this.movement.degrees + range, this.viewDistance)
-        
-        const getArc = ( degree ) => ( (this.movement.degrees + degree) / 360 ) * ( Math.PI * 2 )
-        
-        ctx.beginPath();
-        ctx.arc(center.x, center.y, ray, getArc(-range), getArc(+range) );
-        ctx.moveTo(center.x, center.y);
-        ctx.stroke();
+        this.fieldOfView.debug(ctx);
 
         ctx.font = "10px Arial";
+        let i = 0
         for (const element of this.getContext().elements) {
 
             if (element === this ) {
                 continue
             }
            
-            ctx.fillText("Degrees: " + this.getAngleTo(element.position), this.position.x + 30, this.position.y);
-            
+            ctx.fillText("Degrees: " + this.getAngleTo(element.position), this.position.x + 30, this.position.y + ( 20 * i ));
+            i++;
             if ( this.fieldOfView.has(element) ) {
 
                 this.drawLineInside(ctx, this.getAngleTo(element.position), this.getDistanceToElement(element))
@@ -138,4 +123,4 @@ class AnimalWithFear extends AnimalMover {
         super.update()
     }
 }
-exports.AnimalWithFear = AnimalWithFear;
+exports.AnimalWithAngry = AnimalWithAngry;

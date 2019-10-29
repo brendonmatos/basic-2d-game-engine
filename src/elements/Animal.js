@@ -1,5 +1,6 @@
-const { Element } = require("./Element");
-class Animal extends Element {
+const { _Element } = require("./Element");
+const { Life } = require("../components/Life")
+class Animal extends _Element {
     constructor(position, size = {x: 50, y: 50}) {
         super(position, size);
 
