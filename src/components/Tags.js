@@ -8,8 +8,6 @@ exports.Tag = class {
 
 exports.Tags = class {
 
-    
-
     constructor( element ) {
         this.list = []
     }

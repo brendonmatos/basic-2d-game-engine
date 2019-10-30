@@ -27,7 +27,7 @@ class AnimalWithFear extends AnimalMover {
             }
 
             if( this.isFood(element) ){
-                this.moveToPosition(element.position)
+                this.movement.moveToPosition(element.position)
             }
         });
         
@@ -101,41 +101,7 @@ class AnimalWithFear extends AnimalMover {
 
     draw(ctx) {
         super.draw(ctx)
-
-        const center = this.getCenterPosition();
-        const ray = this.viewDistance;
-
-        const range = this.viewAngleRange / 2;
-        
-        this.drawLineInside(ctx, this.movement.degrees - range, this.viewDistance)
-        this.drawLineInside(ctx, this.movement.degrees + range, this.viewDistance)
-        
-        const getArc = ( degree ) => ( (this.movement.degrees + degree) / 360 ) * ( Math.PI * 2 )
-        
-        ctx.beginPath();
-        ctx.arc(center.x, center.y, ray, getArc(-range), getArc(+range) );
-        ctx.moveTo(center.x, center.y);
-        ctx.stroke();
-
-        ctx.font = "10px Arial";
-        for (const element of this.getContext().elements) {
-
-            if (element === this ) {
-                continue
-            }
-           
-            ctx.fillText("Degrees: " + this.getAngleTo(element.position), this.position.x + 30, this.position.y);
-            
-            if ( this.fieldOfView.has(element) ) {
-
-                this.drawLineInside(ctx, this.getAngleTo(element.position), this.getDistanceToElement(element))
-        
-            } 
-        }
-    }
-
-    update() {
-        super.update()
+        this.fieldOfView.debug(ctx)
     }
 }
 exports.AnimalWithFear = AnimalWithFear;

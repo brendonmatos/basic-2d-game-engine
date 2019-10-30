@@ -72,7 +72,7 @@ class _Element {
         ctx.arc(this.position.x + ray, this.position.y + ray, ray, 0, 2 * Math.PI);
         ctx.stroke();
 
-        this.drawLineInside(ctx, this.movement.degrees, this.dimensions.x)
+        this.drawLineInside(ctx, this.movement.degrees, ray)
         
     }
 }

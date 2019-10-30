@@ -2,7 +2,12 @@ exports.FieldOfView = class {
 
     constructor(element) {
         this.element = element
+        this.distance = 100
+        this.angle = 34
 
+        if( !this.element.movement ) {
+            throw new Error("The component FieldOfView dependsof movement component")
+        }
     }
 
     has(element) {
@@ -25,7 +30,7 @@ exports.FieldOfView = class {
         }
 
         const angleToElement = this.element.getAngleTo(element.position)
-        const range = this.element.viewAngleRange / 2;
+        const range = this.angle / 2;
         const startRange = (this.element.movement.degrees - range) 
         const endRange = (this.element.movement.degrees + range) 
 

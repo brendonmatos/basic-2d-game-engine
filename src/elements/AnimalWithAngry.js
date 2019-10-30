@@ -1,20 +1,22 @@
 const { AnimalMover } = require("./AnimalMover");
 const { FieldOfView } = require("../components/FieldOfView")
+const { FOVTagsNotifier } = require("../components/FOVTagsNotifier")
 class AnimalWithAngry extends AnimalMover {
     constructor(position, settings) {
         super(position, settings);
-        this.type = 'animal-with-angry'
-        this.fears = [ ] // Move fear to a separated component
-        this.foods = [ {type: 'animal-with-fear'},  {type: 'player'} ]
+        
+        this.fears = [] // Move fear to a separated component
+        this.foods = []
         
         this.runningFrom = []
         this.viewDistance = 100
         this.viewAngleRange = 34
         this.maxVelocity = 1
 
-        this.fieldOfView = new FieldOfView(this)
+        this.fov = new FieldOfView(this)
+        this.fov.notifier = new FOVTagsNotifier(this)
 
-        this.messages.on('second', () => this.verifyVision());
+        this.messages.on('second', () => this.fov.notifier.update());
         
         this.messages.on('see', (element) => {
             if( this.hasFearOf(element) ) {
@@ -23,7 +25,7 @@ class AnimalWithAngry extends AnimalMover {
             }
 
             if( this.isFood(element) ){
-                this.moveToPosition(element.position)
+                this.movement.moveToPosition(element.position)
             }
         });
         
@@ -61,7 +63,7 @@ class AnimalWithAngry extends AnimalMover {
             return 
         }
 
-        this.setTowards(element.position)
+        this.movement.setTowards(element.position)
         this.movement.degrees += 180
         this.movement.velocity = (( element.maxVelocity / element.movement.velocity ) + 0.1) * this.maxVelocity
         this.runningFrom.push(element)
@@ -78,28 +80,12 @@ class AnimalWithAngry extends AnimalMover {
     }
 
     
-    verifyVision() {
-
-        const elements = this.getContext().elements
-
-        for (const element of elements) {
-
-            if (element === this ) {
-                continue
-            }
-            
-            if ( this.fieldOfView.has(element) ) {
-                this.messages.emit('see', element);
-            } else {
-                this.messages.emit('outofview', element)
-            }
-        }
-    }
+    
 
     draw(ctx) {
         super.draw(ctx)
 
-        this.fieldOfView.debug(ctx);
+        this.fov.debug(ctx);
 
         ctx.font = "10px Arial";
         let i = 0
@@ -111,7 +97,7 @@ class AnimalWithAngry extends AnimalMover {
            
             ctx.fillText("Degrees: " + this.getAngleTo(element.position), this.position.x + 30, this.position.y + ( 20 * i ));
             i++;
-            if ( this.fieldOfView.has(element) ) {
+            if ( this.fov.has(element) ) {
 
                 this.drawLineInside(ctx, this.getAngleTo(element.position), this.getDistanceToElement(element))
         
