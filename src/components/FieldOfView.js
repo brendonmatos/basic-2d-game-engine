@@ -3,7 +3,7 @@ exports.FieldOfView = class {
     constructor(element) {
         this.element = element
         this.distance = 100
-        this.angle = 34
+        this.angle = 200
 
         if( !this.element.movement ) {
             throw new Error("The component FieldOfView dependsof movement component")
@@ -13,7 +13,7 @@ exports.FieldOfView = class {
     has(element) {
 
         const distanceToElement = this.element.getDistanceToElement(element)
-        if( distanceToElement > this.element.viewDistance ) {
+        if( distanceToElement > this.distance ) {
             return 
         }
 
@@ -40,12 +40,12 @@ exports.FieldOfView = class {
     debug(canvasCtx) {
 
         const center = this.element.getCenterPosition();
-        const ray = this.element.viewDistance;
+        const ray = this.distance;
 
-        const range = this.element.viewAngleRange / 2;
+        const range = this.angle / 2;
         
-        this.element.drawLineInside(canvasCtx, this.element.movement.degrees - range, this.element.viewDistance)
-        this.element.drawLineInside(canvasCtx, this.element.movement.degrees + range, this.element.viewDistance)
+        this.element.drawLineInside(canvasCtx, this.element.movement.degrees - range, this.distance)
+        this.element.drawLineInside(canvasCtx, this.element.movement.degrees + range, this.distance)
         
         const getArc = ( degree ) => ((this.element.movement.degrees + degree) / 360) * (Math.PI * 2)
         

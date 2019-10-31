@@ -1,6 +1,6 @@
 import { Movement } from "../components/Movement";
-const { Animal } = require("./Animal");
-export class AnimalMover extends Animal {
+const { Creature } = require("./Creature");
+export class CreatureMovable extends Creature {
 
     constructor(position, settings = {}) {
         super(position, { x: 20, y: 20 });

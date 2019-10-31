@@ -42,8 +42,12 @@ class _Element {
         return Math.sqrt(a * a + b * b);
     }
 
-    emit(eventName, data) {
-        this.messages.emit(eventName, data);
+    on( ...args ) {
+        this.messages.on( ...args )
+    }
+
+    emit( ...args ) {
+        this.messages.emit(...args);
     }
     
     getAngleTo(position){

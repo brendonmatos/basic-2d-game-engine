@@ -1,10 +1,3 @@
-exports.Tag = class {
-
-    constructor(name) {
-        this.name = name
-    }
-
-}
 
 exports.Tags = class {
 

@@ -1,16 +1,32 @@
-const { _Element } = require("./Element");
-const { Life } = require("../components/Life")
-class Animal extends _Element {
-    constructor(position, size = {x: 50, y: 50}) {
-        super(position, size);
+const { CreatureMovable } = require("./CreatureMovable");
+const { MouseController } =  require("../lib/MouseController");
+const { KeyboardController } =  require("../lib/KeyboardController")
+const { FieldOfView } = require("../components/FieldOfView")
+const { Viewer } = require("../components/Viewer")
 
-        this.life = new Life()
-        this.degradationRate = 0.001;
-
+class AnimalPlayer extends CreatureMovable {
+    constructor(position) {
+        super(position);
+        
+        this.mouse = new MouseController();
+        this.keyboard = new KeyboardController();
+        this.viewer = new Viewer(this);
+        this.fov = new FieldOfView(this)
     }
+
+    setContext(context) {
+        super.setContext(context)
+        
+        this.viewer.start()
+    }
+
     update() {
-        super.update()
-        this.life -= this.degradationRate;
+        super.update();
+    }
+
+    draw(ctx) {
+        super.draw(ctx)
+        this.fov.debug(ctx)
     }
 }
-exports.Animal = Animal
+exports.AnimalPlayer = AnimalPlayer;
