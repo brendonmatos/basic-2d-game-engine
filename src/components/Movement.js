@@ -3,6 +3,7 @@ export class Movement {
         this.element = element
         this.degrees =  0
         this.velocity = 0 
+        this.maxVelocity = 3
         this.destination = null
     }
 

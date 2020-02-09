@@ -37,7 +37,6 @@ class AnimalPlayer extends CreatureMovable {
     }
 
     draw(ctx) {
-
         super.draw(ctx)
         this.fov.debug(ctx)
         this.mouse.debug(ctx)

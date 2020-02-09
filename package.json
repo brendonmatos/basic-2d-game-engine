@@ -4,9 +4,13 @@
   "description": "",
   "main": "script.js",
   "scripts": {
-    "dev": "parcel index.html",
+    "dev:world1": "parcel sandboxes/world1/index.html",
+    "dev:world2": "parcel sandboxes/world2/index.html",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^3.7.5"
+  }
 }
