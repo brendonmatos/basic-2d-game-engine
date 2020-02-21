@@ -160,7 +160,9 @@ class ScreenInterface {
         this.ctx = this.canvas.getContext("2d");
     }
 
-    renderLine(vectorStart: Vector2, vectorEnd: Vector2) {
+    renderLine(vectorStart: Vector2, vectorEnd: Vector2, color: string) {
+        console.log(color)
+        this.ctx.strokeStyle = color;
         this.ctx.beginPath();
         this.ctx.moveTo(vectorStart.x, vectorStart.y);
         this.ctx.lineTo(vectorEnd.x, vectorEnd.y);
@@ -220,6 +222,10 @@ class Vector2 {
     distance(vector: Vector2) {
         return Math.sqrt((this.x - vector.x)**2 + (this.y - vector.y)**2)
     }
+
+    lineTo(position: Vector2) {
+        return new Line2d(this, position)
+    }
 }
 
 class Element2dSurface {
@@ -230,14 +236,48 @@ class Element2dSurface {
 
 }
 
-class Mesh2d  {
+class Mesh2d {
     start: Vector2;
     end: Vector2;
-    constructor(start: Vector2, end: Vector2) {
+    color: string;
+    constructor(start: Vector2, end: Vector2, color = '#000') {
         this.start = start
         this.end = end
+        this.color = color
     }
 
+    getAsLine() {
+        return new Line2d(this.start, this.end);
+    }
+
+    static fromLine(line: Line2d) {
+        return new Mesh2d(line.a, line.b);
+    }
+}
+
+class Line2d {
+    a: Vector2;
+    b: Vector2;
+    constructor(a: Vector2, b: Vector2) {
+        this.a = a
+        this.b = b
+    }
+
+    isIntersecting(line: Line2d) {
+        const {x: a, y: b} = this.a
+        const {x: c, y: d} = this.b
+        const {x: p, y: q} = line.a
+        const {x: r, y: s} = line.b
+        let det, gamma, lambda;
+        det = (c - a) * (s - q) - (r - p) * (d - b);
+        if (det === 0) {
+            return false;
+        } else {
+            lambda = ((s - q) * (r - a) + (p - r) * (s - b)) / det;
+            gamma = ((b - d) * (r - a) + (c - a) * (s - b)) / det;
+            return (0 < lambda && lambda < 1) && (0 < gamma && gamma < 1);
+        }
+    }
 }
 
 function PentagonSurface() {
@@ -252,9 +292,9 @@ function PentagonSurface() {
 
 function RandomSurface() {
     const generator = new RIP({
-        numOfPoints: 30, // number of points
-        minCoordVal: 20, // minimum coordinate value
-        maxCoordVal: 100, // maximum coordinate value
+        numOfPoints: 10, // number of points
+        minCoordVal: 10, // minimum coordinate value
+        maxCoordVal: 110, // maximum coordinate value
     });
     const coords = generator.getPolygonCoord();
 
@@ -303,7 +343,8 @@ class Player2d {
     }
 
     attachCamera(camera: RayTracingRenderer2d) {
-        this.camera = camera
+        throw Error('Not implemented')
+        // this.camera = camera
     }
 
     setContext(world: World) {
@@ -311,15 +352,7 @@ class Player2d {
     }
 
     everyTick() {
-
-        console.log(this.rotation)
-
-
         this.rotation += 0.03
-
-
-
-
     }
 
     getMeshes() {
@@ -367,8 +400,6 @@ class RayTracingRenderer2d {
 
             this.updateVisibleMeshes()
 
-
-
         }, 30)
     }
     
@@ -378,16 +409,39 @@ class RayTracingRenderer2d {
 
     // MEshes is vectors
     updateVisibleMeshes() {
+
+        function isIntersectingWithSomeMesh(line: Line2d, meshes: any[]) {
+            for (const mesh of meshes) {
+                if (line.isIntersecting(mesh.getAsLine())) {
+                    return true;
+                }
+            }
+            return false
+        }
+
         for( const element of this.context.elements ) {
 
             const meshes = element.getMeshes()
 
             const visibleMeshes = []
 
-            for( const mesh of meshes ) {
 
-                if(  element.position.sum(element.pivot).isPointBetween(mesh.start, this.position) || element.position.sum(element.pivot).isPointBetween(mesh.end, this.position) ) {
-                    visibleMeshes.push(mesh)
+            for( const meshA of meshes ) {
+
+                const lineA = new Line2d( meshA.start, this.position )
+                if( !isIntersectingWithSomeMesh(lineA, meshes) ) {
+                    meshA.color = "#FF0000"
+                    visibleMeshes.push( Mesh2d.fromLine(lineA) )
+                    visibleMeshes.push(meshA)
+                    continue
+                }
+
+                const lineB = new Line2d( meshA.end, this.position )
+                if( !isIntersectingWithSomeMesh(lineB, meshes) ) {
+                    meshA.color = "#FF0000"
+                    visibleMeshes.push( Mesh2d.fromLine(lineB) )
+                    visibleMeshes.push(meshA)
+                    continue
                 }
 
             }
@@ -403,10 +457,10 @@ class RayTracingRenderer2d {
         let mesh2d;
 
         while( mesh2d = this.visibleMeshes.pop()) {
-            this.screenInterface.renderLine(mesh2d.start, mesh2d.end)
+            this.screenInterface.renderLine(mesh2d.start, mesh2d.end, mesh2d.color)
         }
 
-        this.screenInterface.renderLine(this.position, this.position.sum(new Vector2(30,30)))
+        this.screenInterface.renderLine(this.position, this.position.sum(new Vector2(30,30)), "#FF0000")
     }
 
     renderQueue() {
@@ -456,13 +510,16 @@ const camera = new RayTracingRenderer2d()
 camera.setContext( world )
 
 const mouse = new MouseController()
-camera.position = mouse.position
+camera.position = mouse.position;
 
-const player = new Player2d(new Vector2(200,200))
-player.setContext( world )
-player.attachCamera( camera )
 
-world.addElement( player )
+//@ts-ignore
+for( const index in Array.from({length: 4}) ) {
+    const player = new Player2d(new Vector2(Math.random() * 500,Math.random() * 400))
+    player.setContext( world )
+    // player.attachCamera( camera )
+    world.addElement(player)
+}
 
 camera.start()
 // ambient
