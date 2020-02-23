@@ -6,6 +6,7 @@
   "scripts": {
     "dev:world1": "parcel sandboxes/world1/index.html",
     "dev:world2": "parcel sandboxes/world2/index.html",
+    "dev:world3": "parcel sandboxes/world3/index.html",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

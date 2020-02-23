@@ -485,9 +485,9 @@ class RayTracingRenderer2d {
     }
 
     renderQueue() {
-        // TODO: render only the visible meshes
 
 
+        // Calculate, and uptate all the visible meshes to the camera
         this.updateVisibleMeshes()
 
         requestAnimationFrame(() => {
@@ -532,12 +532,10 @@ camera.setContext( world )
 const mouse = new MouseController()
 camera.position = mouse.position;
 
-
 //@ts-ignore
 for( const index in Array.from({length: 5}) ) {
     const player = new Player2d(new Vector2(Math.random() * 500,Math.random() * 400))
-    player.setContext( world )
-    // player.attachCamera( camera )
+    player.setContext(world)
     world.addElement(player)
 }
 
