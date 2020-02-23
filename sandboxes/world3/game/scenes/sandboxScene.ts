@@ -21,7 +21,7 @@ export class SandboxScene extends _Scene {
         camera.position.vector2 = mouse.position;
 
         // Create players in the world
-        for( const index in Array.from({length: 200}) ) {
+        for( const index in Array.from({length: 10}) ) {
             const player = new Player2d(new Vector2(Math.random() * 500,Math.random() * 400))
             player.setParent(world)
         }

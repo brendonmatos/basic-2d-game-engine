@@ -4,8 +4,6 @@ import {ScreenInterface} from "./ScreenInterface";
 import {Surface2d} from "../components/Surface2d";
 import {Position2d} from "../components/Position2d";
 
-import {ElementsContext} from "../context/ElementsContext";
-
 import {Vector2} from "../Vector2";
 import {Line2d} from "../Line2d";
 import {_Element} from "../Element";
@@ -73,7 +71,6 @@ export class RayTracingRenderer2d extends _Element {
             try {
                 surface = element.getComponent<Surface2d>('surface')
 
-
                 const meshes = surface.getMeshes()
 
                 const visibleMeshes = []
@@ -82,7 +79,7 @@ export class RayTracingRenderer2d extends _Element {
 
                 for (const mesh of meshes) {
 
-                    mesh.color = '#ff0000'
+                    // mesh.color = '#ff0000'
 
                     if (this.isCachedPointRendered(mesh.start)) {
                         if (this.isCachedPointRendered(mesh.end)) {
@@ -92,11 +89,13 @@ export class RayTracingRenderer2d extends _Element {
 
                         if (this.isPointVisible(mesh.end, meshes)) {
                             visibleMeshes.push(mesh)
+                            visibleMeshes.push(new Mesh2d(mesh.end, this.position.vector2))
                             continue
                         }
                     } else {
                         if (this.isPointVisible(mesh.start, meshes)) {
                             visibleMeshes.push(mesh)
+                            visibleMeshes.push(new Mesh2d(mesh.start, this.position.vector2))
                             continue
                         }
                     }

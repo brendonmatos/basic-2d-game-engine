@@ -1,4 +1,8 @@
+// @ts-ignore
+// require('native-canvas')
+
 import {Vector2} from "../Vector2";
+
 
 export class ScreenInterface {
     private canvas: HTMLCanvasElement;
@@ -6,6 +10,8 @@ export class ScreenInterface {
 
     constructor() {
         this.canvas = document.getElementById("myCanvas") as HTMLCanvasElement;
+        //@ts-ignore
+        // this.canvas = canvas
         this.ctx = this.canvas.getContext("2d");
     }
 
