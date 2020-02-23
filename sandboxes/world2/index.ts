@@ -322,6 +322,15 @@ function SquareSurface() {
 }
 
 
+function isIntersectingWithSomeMesh(line: Line2d, meshes: any[]) {
+    for (const mesh of meshes) {
+        if (line.isIntersecting(mesh.getAsLine())) {
+            return true;
+        }
+    }
+    return false
+}
+
 
 class Player2d {
 
@@ -377,19 +386,20 @@ class RayTracingRenderer2d {
     private isPaused: any;
     screenInterface: ScreenInterface;
     position: Vector2;
-    visibleMeshes: Mesh2d[]
+    visibleMeshes: Mesh2d[];
+    private visiblePoints: {};
 
     constructor() {
         this.screenInterface = new ScreenInterface()
         this.position = new Vector2( 100, 300 )
         this.visibleMeshes = []
-
+        this.visiblePoints = {}
 
     }
 
     start() {
         this.renderQueue()
-
+        //
         setInterval(() => {
 
             for( const element of this.context.elements ){
@@ -398,7 +408,7 @@ class RayTracingRenderer2d {
                 }
             }
 
-            this.updateVisibleMeshes()
+            // this.updateVisibleMeshes()
 
         }, 30)
     }
@@ -407,17 +417,21 @@ class RayTracingRenderer2d {
         this.context = context
     }
 
+    isCachedPointRendered(point) {
+        const key = point.x + ':' + point.y
+        return this.visiblePoints[key]
+    }
+
+    isPointVisible( point: Vector2, meshes: Mesh2d[] ) {
+        const line = new Line2d( point, this.position )
+        if( !isIntersectingWithSomeMesh(line, meshes) ) {
+            return true;
+        }
+    }
+
     // MEshes is vectors
     updateVisibleMeshes() {
 
-        function isIntersectingWithSomeMesh(line: Line2d, meshes: any[]) {
-            for (const mesh of meshes) {
-                if (line.isIntersecting(mesh.getAsLine())) {
-                    return true;
-                }
-            }
-            return false
-        }
 
         for( const element of this.context.elements ) {
 
@@ -425,24 +439,31 @@ class RayTracingRenderer2d {
 
             const visibleMeshes = []
 
+            this.visiblePoints = {}
 
             for( const meshA of meshes ) {
 
-                const lineA = new Line2d( meshA.start, this.position )
-                if( !isIntersectingWithSomeMesh(lineA, meshes) ) {
-                    meshA.color = "#FF0000"
-                    visibleMeshes.push( Mesh2d.fromLine(lineA) )
-                    visibleMeshes.push(meshA)
-                    continue
+                meshA.color = '#ff0000'
+
+                if( this.isCachedPointRendered(meshA.start) ){
+                    if( this.isCachedPointRendered(meshA.end) ) {
+                        visibleMeshes.push(meshA)
+                        continue
+                    }
+
+                    if( this.isPointVisible(meshA.end, meshes) ) {
+                        visibleMeshes.push(meshA)
+                        continue
+                    }
+                } else {
+                    if( this.isPointVisible(meshA.start, meshes) ) {
+                        visibleMeshes.push(meshA)
+                        continue
+                    }
                 }
 
-                const lineB = new Line2d( meshA.end, this.position )
-                if( !isIntersectingWithSomeMesh(lineB, meshes) ) {
-                    meshA.color = "#FF0000"
-                    visibleMeshes.push( Mesh2d.fromLine(lineB) )
-                    visibleMeshes.push(meshA)
-                    continue
-                }
+                meshA.color = '#000000'
+                visibleMeshes.push(meshA)
 
             }
 
@@ -456,11 +477,11 @@ class RayTracingRenderer2d {
 
         let mesh2d;
 
-        while( mesh2d = this.visibleMeshes.pop()) {
+        while( (mesh2d = this.visibleMeshes.pop()) ) {
             this.screenInterface.renderLine(mesh2d.start, mesh2d.end, mesh2d.color)
         }
 
-        this.screenInterface.renderLine(this.position, this.position.sum(new Vector2(30,30)), "#FF0000")
+        // this.screenInterface.renderLine(this.position, this.position.sum(new Vector2(30,30)), "#FF0000")
     }
 
     renderQueue() {
@@ -468,7 +489,6 @@ class RayTracingRenderer2d {
 
 
         this.updateVisibleMeshes()
-
 
         requestAnimationFrame(() => {
 
@@ -514,7 +534,7 @@ camera.position = mouse.position;
 
 
 //@ts-ignore
-for( const index in Array.from({length: 4}) ) {
+for( const index in Array.from({length: 5}) ) {
     const player = new Player2d(new Vector2(Math.random() * 500,Math.random() * 400))
     player.setContext( world )
     // player.attachCamera( camera )
