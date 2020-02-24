@@ -281,13 +281,13 @@ class Line2d {
 }
 
 function PentagonSurface() {
-    return new Element2dSurface([
+    return [
         new Mesh2d(new Vector2(0, -50), new Vector2(-48, -15)),
         new Mesh2d(new Vector2(-48, -15), new Vector2(-29, 40)),
         new Mesh2d(new Vector2(-29, 40), new Vector2(29, 40)),
         new Mesh2d(new Vector2(29, 40), new Vector2(48, -15)),
         new Mesh2d(new Vector2(48, -15), new Vector2(0, -50)),
-    ]);
+    ];
 }
 
 function RandomSurface() {

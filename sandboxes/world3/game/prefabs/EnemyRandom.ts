@@ -11,7 +11,7 @@ import {Rotation2d} from "../../engine/components/Rotation2d";
 import {PentagonSurface} from "../../engine/utils/Pentagon2dSurface";
 
 
-export class Player2d extends _Element{
+export class EnemyRandom extends _Element{
 
     private rotation: Rotation2d;
 
@@ -19,7 +19,7 @@ export class Player2d extends _Element{
         super({
             position: new Position2d( position.x, position.y ),
             pivot: new Pivot2d( 50, 50 ),
-            surface: new Surface2d( PentagonSurface() ),
+            surface: new Surface2d( Random2dSurface() ),
             rotation: new Rotation2d( 0 )
         });
 
@@ -27,7 +27,7 @@ export class Player2d extends _Element{
     }
 
     update() {
-
+        this.rotation.radians += 0.03;
     }
 }
 

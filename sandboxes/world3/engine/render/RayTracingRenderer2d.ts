@@ -54,16 +54,19 @@ export class RayTracingRenderer2d extends _Element {
 
         for (const mesh of meshes) {
             if (line.isIntersecting(mesh.getAsLine())) {
-                return true;
+                return false;
             }
         }
-        return false
+        return true
 
     }
 
     // MEshes is vectors
     updateVisibleMeshes() {
         const children = this.parent.getChildren()
+
+
+        this.visiblePoints = {}
 
         for (const element of children) {
 
@@ -73,39 +76,34 @@ export class RayTracingRenderer2d extends _Element {
 
                 const meshes = surface.getMeshes()
 
-                const visibleMeshes = []
-
-                this.visiblePoints = {}
 
                 for (const mesh of meshes) {
 
-                    // mesh.color = '#ff0000'
 
                     if (this.isCachedPointRendered(mesh.start)) {
                         if (this.isCachedPointRendered(mesh.end)) {
-                            visibleMeshes.push(mesh)
+                            this.visibleMeshes.push(mesh)
+                            this.visibleMeshes.push(new Mesh2d(mesh.end, this.position.vector2, '#0000000f'))
                             continue
                         }
 
                         if (this.isPointVisible(mesh.end, meshes)) {
-                            visibleMeshes.push(mesh)
-                            visibleMeshes.push(new Mesh2d(mesh.end, this.position.vector2))
+                            this.visibleMeshes.push(mesh)
+                            this.visibleMeshes.push(new Mesh2d(mesh.end, this.position.vector2, '#0000000f'))
                             continue
                         }
                     } else {
                         if (this.isPointVisible(mesh.start, meshes)) {
-                            visibleMeshes.push(mesh)
-                            visibleMeshes.push(new Mesh2d(mesh.start, this.position.vector2))
+                            this.visibleMeshes.push(mesh)
+                            this.visibleMeshes.push(new Mesh2d(mesh.start, this.position.vector2, '#0000000f'))
                             continue
                         }
                     }
 
                     // mesh.color = '#000000'
-                    // visibleMeshes.push(mesh)
+                    // this.visibleMeshes.push(mesh)
 
                 }
-
-                this.visibleMeshes.push(...visibleMeshes)
 
 
             } catch (e) {
@@ -113,6 +111,7 @@ export class RayTracingRenderer2d extends _Element {
             }
             // this.visibleMeshes.push(new Mesh2d(element.position.sum(element.pivot), element.position.sum(element.pivot).sum(new Vector2(1, 1))))
         }
+
     }
 
     renderVisibleMeshes() {
